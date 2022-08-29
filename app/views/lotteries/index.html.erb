@@ -1,1 +1,29 @@
-<h1>うじゅガチャ作るよ</h1>
+<div class="container">
+  <h1>うじゅガチャ作るよ</h1>
+  <div class="row">
+    <% @lotteries.each do |lottery| %>
+      <div class="col-4">
+        <div>
+          <%= lottery.name %>
+        </div>
+        <div>
+          <%= image_tag "gacha.png", class: "gacha-image" %>
+        </div>
+        <div>
+          <% if Lottery.items?(lottery) %>
+            <%= link_to "アイテム登録", edit_lottery_path(lottery.id) %>
+          <% else %>
+            <%= link_to "ガチャを回す", new_result_path(lottery_id: lottery.id) %>
+          <% end %>
+          <%= link_to "ガチャを削除", lottery_path(lottery.id), method: :delete %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+<style>
+.gacha-image {
+  width: 100px;
+}
+
+</style>

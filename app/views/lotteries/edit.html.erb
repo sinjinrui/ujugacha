@@ -1,0 +1,124 @@
+<div class="container">
+  <%= form_with model: @lottery, class: "lottery-items-form", local: true do |f| %>
+    <h3><%= @lottery.name %>の編集画面</h3>
+    <% if @items.blank? %>
+      <% @rarities.each do |rarity| %>
+        <div class="item">
+          <%= f.fields_for "items[]", @item do |i| %>
+            <i class="fa-solid fa-trash-can delete-item"></i>
+            <%= i.label :name, "アイテムの名前" %>
+            <%= i.text_field :name %>
+            <%= i.label :rarity_id, "レアリティ設定" %>
+            <%= i.select :rarity_id, options_for_select(@rarities.map {|r| [r.name, r.id, {}]}, rarity.id), {}, {class: "rarity-select"} %>
+          <% end %>
+        </div>
+      <% end %>
+    <% else %>
+      <% @items.each do |item| %>
+        <div class="item">
+          <%= f.fields_for "current_items[]", item do |i| %>
+            <i class="fa-solid fa-trash-can delete-item"></i>
+            <%= i.label :name, "アイテムの名前" %>
+            <%= i.text_field :name, value: item.name %>
+            <%= i.label :rarity_id, "レアリティ設定" %>
+            <%= i.select :rarity_id, options_for_select(@rarities.map {|r| [r.name, r.id, {}]}, item.rarity_id), {}, {class: "rarity-select"} %>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+    <%= button_tag "アイテムの追加+", type: "button", class: "btn-primary", id: "add-item" %>
+    <p id="value-presence-alert" >※空欄のアイテム名があると登録出来ません</p>
+    <p id="item-presence-alert" >※各レアリティ ひとつ以上のアイテム登録が必要です</p>
+    <div>
+      <%= f.submit "登録", class: "items-submit" %>
+    </div>
+  <% end %>
+</div>
+<div id="hidden-rarity" data-rarity="<%= @rarity_names %>"></div>
+<script>
+$(function(){
+  let index;
+  let raritySelects;
+  let rarirtyLength;
+  let rarityCheck;
+  const raritiesOrigin = $("#hidden-rarity").data().rarity;
+  const trashBtn = $("<i class='fa-solid fa-trash-can delete-item'></i>");
+
+  validateCheck(presenceRarityCheck(), presenceValueCheck());
+
+  $(document).on("keyup", "input[type=text]", function(){
+    validateCheck(presenceRarityCheck(), presenceValueCheck());
+  })
+
+  function validateCheck(r, v){
+    if(r == true && v == true){
+      $("input[type=submit]").attr("disabled", false);
+    } else {
+      $("input[type=submit]").attr("disabled", "disabled");
+    }
+  };
+
+  $(document).on("change", ".rarity-select", function(){
+    validateCheck(presenceRarityCheck(), presenceValueCheck() );
+  });
+
+  $(document).on("click", "#add-item", function(){
+    $this = $(this);
+    $form = $this.prev();
+    $new_form = $form.clone();
+    $new_form.find("input").val("");
+    $this.before($new_form);
+    $trashBtn = $(".delete-item");
+    if ($trashBtn.length == 0){
+      $(".item").prepend(trashBtn);
+    }
+    validateCheck(presenceRarityCheck(), presenceValueCheck() );
+  });
+
+  $(document).on("click", ".delete-item", function(){
+    $this = $(this);
+    $form = $this.parent();
+    $form.remove();
+    validateCheck(presenceRarityCheck(), presenceValueCheck() );
+    $trashBtn = $(".delete-item");
+    if ($trashBtn.length == 1){
+      $trashBtn.remove();
+    }
+  });
+
+  function presenceRarityCheck() {
+    var rarities = [...raritiesOrigin];
+    raritySelects = $(".rarity-select");
+    $.each(raritySelects, function(i, raritySelect){
+      selectRarity = $(raritySelect).find("option:selected").text();
+      if(rarities.includes(selectRarity)){
+        var index = rarities.indexOf(selectRarity);
+        rarities.splice(index, 1)
+      }
+    });
+    rarityLength = rarities.length;
+    if(rarityLength == 0){
+      $("#item-presence-alert").hide();
+      return true;
+    } else {
+      $("#item-presence-alert").show();
+      return false;
+    }
+  };
+
+  function presenceValueCheck(){
+    var itemImputs = $("input[type=text]");
+    var empValue = 0;
+    itemImputs.each(function(i, input) {
+       if ($(input).val() == "") empValue += 1;
+    })
+    if (empValue > 0){
+      $("#value-presence-alert").show();
+      return false;
+    } else {
+      $("#value-presence-alert").hide();
+      return true;
+    }
+  };
+})
+</script>

@@ -1,0 +1,14 @@
+<div class="container">
+  <%= form_with model: @listener, class: "listener-form", local: true do |f| %>
+    <%= f.label :name, "リスナー名" %>
+    <%= f.text_field :name %>
+    <%= f.submit "登録" %>
+  <% end %>
+
+  <% @listeners.each do |listener| %>
+    <div>
+      <%= listener.name %>
+      <%= link_to "削除", listener_path(listener.id), method: :delete %>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,74 @@
+<div class="container">
+  <%= @lottery.name %>
+  <div>
+    <%= form_with model: @result, lodal: true do |f|%>
+      <%= f.label :listener_id, "ガチャを引くリスナー" %>
+      <br>
+      <%= f.select :listener_id, options_for_select(@listeners.map {|listener| [listener.name, listener.id, {}]}, @listener.id), {}, {class: "listener-select"} %>
+      <div>
+        <%= f.number_field :time, value: 1, in: 1..100 %>
+        回
+        <%= f.submit "ガチャる" %>
+        <%= f.hidden_field :lottery_id, value: @lottery.id%>
+      </div>
+    <% end %>
+  </div>
+  <div class="row">
+    <div class="col-6">
+      <h2><%= @lottery.name %></h2>
+      <h3>アイテム一覧</h3>
+      <% @items.each do |item| %>
+        <div class="row result-left">
+          <span class="col-4"><%= item.name %></span>
+          <span class="col-2"><%= item.rarity.name %></span>
+          <span class="col-6 text-right"><%= rarity_weight(item) %>%</span>
+        </div>
+      <% end %>
+    </div>
+    <div class="col-6">
+      <div class="result-history">
+        <h2>ガチャ履歴</h2>
+        <%= link_to "履歴を削除", result_path(@lottery.id, listener_id: @listener.id), method: :delete %>
+      </div>
+      <div class="result-box">
+        <% @results.each do |result| %>
+          <div class="row">
+            <span class="col-4"><%= result.created_at.strftime("%Y/%-m/%-d %-H:%-M:%-S") %></span>
+            <span class="col-8"><%= @listener.name %>さんが<%= result.item.name %>[<%= result.item.rarity.name %>]を獲得しました</span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+$(function(){
+  $(document).on("change", ".listener-select", function(){
+    console.log(this);
+    window.location.href = "/results/new?lottery_id=<%= @lottery.id %>&listener_id="+`${$(this).val()}`;
+  });
+})
+</script>
+
+<style>
+.result-box {
+  max-height: 800px;
+  overflow: scroll;
+  background: #ddd;
+  margin-bottom: 30px;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.result-left {
+  width: 400px;
+}
+
+.result-history {
+  display: flex;
+  justify-content: space-between;
+}
+</style>

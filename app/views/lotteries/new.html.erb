@@ -1,0 +1,89 @@
+<div class="container">
+  <h1>ガチャを作る画面</h1>
+
+  <%= form_with model: @lottery, class: "lottery-form", local: true do |f| %>
+    <%= f.label :name, "ガチャの名前" %>
+    <%= f.text_field :name %>
+    <br>
+    <% 5.times do |i| %>
+      <%= f.fields_for "rarities[]", @rarity do |r| %>
+        <div class="rarity">
+          <i class="fa-solid fa-trash-can delete-rarity"></i>
+          <%= r.label :name, "レアリティの名前" %>
+          <%= r.text_field :name %>
+          <%= r.label :weight, "確率" %>
+          <%= r.number_field :weight, class: "weight" %>
+        </div>
+      <% end %>
+    <% end %>
+    <%= button_tag "レアリティの追加+", type: "button", class: "btn-primary", id: "add-rarity" %>
+    <p>合計確率<span id="sum-weight">0</span></p>
+    <p id="sum-weight-alert" >※レアリティの合計確率が100%にならないと登録できません（仮）</p>
+    <%= f.submit "登録" %>
+  <% end %>
+</div>
+
+<script>
+$(function(){
+  let weights = $(".weight");
+  let weightNums;
+  let num;
+  let sumWeight = 0;
+  let sumWeightText;
+  const trashBtn = $("<i class='fa-solid fa-trash-can delete-rarity'></i>");
+
+  sumWeightHandred();
+  isNumJustHandred();
+
+  $(document).on("click", "#add-rarity", function(){
+    $this = $(this);
+    $form = $this.prev();
+    $new_form = $form.clone();
+    $new_form.find("input").val("");
+    $this.before($new_form);
+    $trashBtn = $(".delete-rarity");
+    if ($trashBtn.length == 0){
+      $(".rarity").prepend(trashBtn);
+    }
+  });
+
+  $(document).on("click", ".delete-rarity", function(){
+    $this = $(this);
+    $form = $this.parent();
+    $form.remove();
+    sumWeightHandred();
+    isNumJustHandred();
+    $trashBtn = $(".delete-rarity");
+    if ($trashBtn.length == 1){
+      $trashBtn.remove();
+    }
+  });
+
+  $(document).on("change keyup", ".weight", function(){
+    sumWeightHandred();
+    isNumJustHandred();
+  });
+
+  function sumWeightHandred(){
+    sumWeight = 0;
+    weights = $(".weight");
+    weights.each(function(i, weight){
+      num = Number($(weight).val());
+      sumWeight += num;
+    });
+    $("#sum-weight").text(sumWeight);
+  };
+
+  function isNumJustHandred(){
+    sumWeightText = $("#sum-weight").html();
+    if(Number(sumWeightText) != 100){
+      $("#sum-weight-alert").show();
+      $("input[type=submit]").attr("disabled", "disabled");
+    } else {
+      $("#sum-weight-alert").hide();
+      $("input[type=submit]").attr("disabled", false);
+    }
+  };
+
+})
+</script>
