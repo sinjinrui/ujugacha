@@ -10,7 +10,7 @@
           <%= image_tag "gacha.png", class: "gacha-image" %>
         </div>
         <div>
-          <% if Lottery.items?(lottery) %>
+          <% if !Lottery.items?(lottery) %>
             <%= link_to "アイテム登録", edit_lottery_path(lottery.id) %>
           <% else %>
             <%= link_to "ガチャを回す", new_result_path(lottery_id: lottery.id) %>
