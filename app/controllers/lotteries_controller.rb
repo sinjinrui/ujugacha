@@ -40,7 +40,6 @@ class LotteriesController < ApplicationController
   end
 
   def update
-    binding.pry
     items = []
     ActiveRecord::Base.transaction do
       # ここにlotteryのupdateも追加する
