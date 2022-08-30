@@ -13,7 +13,9 @@
           <% if !Lottery.items?(lottery) %>
             <%= link_to "アイテム登録", edit_lottery_path(lottery.id) %>
           <% else %>
-            <%= link_to "ガチャを回す", new_result_path(lottery_id: lottery.id) %>
+            <% if Listener.last.present? %>
+              <%= link_to "ガチャを回す", new_result_path(lottery_id: lottery.id) %>
+            <% end %>
           <% end %>
           <%= link_to "ガチャを削除", lottery_path(lottery.id), method: :delete %>
         </div>
