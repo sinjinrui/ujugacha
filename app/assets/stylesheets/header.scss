@@ -1,6 +1,24 @@
+a {
+  text-decoration: none;
+}
+
 .header {
-  border-bottom: 1px solid #cacaca;
-  img {
-    height: 50px;
+  background-color: #874bb8;
+  width: 100vw;
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 12px;
+  .header-items {
+    line-height: 40px;
+    text-decoration: none;
   }
+  .header-item {
+    padding:3px;
+    background-color: #d087f3;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+  }
+
 }

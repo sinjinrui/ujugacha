@@ -2,22 +2,30 @@
   <h1>うじゅガチャ作るよ</h1>
   <div class="row">
     <% @lotteries.each do |lottery| %>
-      <div class="col-4">
-        <div>
-          <%= lottery.name %>
-        </div>
-        <div>
+      <div class="col-12 lottery">
+        <div class="col-2 lottery-left">
           <%= image_tag "gacha.png", class: "gacha-image" %>
         </div>
-        <div>
-          <% if !Lottery.items?(lottery) %>
-            <%= link_to "アイテム登録", edit_lottery_path(lottery.id) %>
-          <% else %>
-            <% if Listener.last.present? %>
-              <%= link_to "ガチャを回す", new_result_path(lottery_id: lottery.id) %>
+        <div class="col-10 lottery-right">
+          <h2 class="lottery-title">
+            <%= lottery.name %>
+          </h2>
+          <div class="lottery-options">
+            <% if !Lottery.items?(lottery) %>
+              <%= link_to edit_lottery_path(lottery.id), class: "option-link" do %>
+                <p class="lottery-option"><i class="fa-solid fa-wrench fa-lg"></i><span class="hover-word">アイテム登録</span></p>
+              <% end %>
+            <% else %>
+              <% if Listener.last.present? %>
+                <%= link_to new_result_path(lottery_id: lottery.id), class: "option-link" do %>  
+                  <p class="lottery-option"><i class="fa-solid fa-gem fa-lg"></i><span class="hover-word">ガチャを回す</span></p>
+                <% end %>
+              <% end %>
             <% end %>
-          <% end %>
-          <%= link_to "ガチャを削除", lottery_path(lottery.id), method: :delete %>
+            <%= link_to lottery_path(lottery.id), class: "lottery-delete option-link", method: :delete  do %>
+              <p class="lottery-option"><i class="fa-solid fa-trash-can fa-lg"></i><span class="hover-word">ガチャを削除</span></p>
+            <% end %>
+          </div>
         </div>
       </div>
     <% end %>
@@ -26,6 +34,54 @@
 <style>
 .gacha-image {
   width: 100px;
+}
+
+.container {
+  padding-top: 24px;
+}
+
+.lottery {
+  display: flex;
+  border-top: 1px solid #f4deff;
+  padding: 12px 0;
+}
+
+.lottery-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.lottery-title {
+  font-size: 32px;
+}
+
+.lottery-options {
+  display: flex;
+  justify-content: end;
+}
+
+.lottery-delete {
+  margin-left: 8px;
+}
+
+.hover-word {
+  display: none;
+  transition: 0.5s ease;
+  font-size: 16px;
+}
+
+.lottery-option .hover-word {
+  display: inline;
+  color: #fff;
+}
+
+.option-link {
+  padding: 3px;
+  border-radius: 3px;
+  color: #fff;
+  background: #874bb8;
+  text-decoration: none !important;
 }
 
 </style>

@@ -1,11 +1,11 @@
 <div class="header">
-  <div class="header-left">
+  <div class="header-left header-items">
     <%= link_to root_path do %>
-      <p>うじゅガチャ</p>
+      <p><span class="header-item">うじゅガチャ</span></p>
     <% end %>
   </div>
-  <div class="header-right">
-    <%= link_to "ガチャを作る", new_lottery_path %>
-    <%= link_to "リスナーを登録する", listeners_path %>
+  <div class="header-right header-items">
+    <%= link_to "ガチャを作る", new_lottery_path, class: "header-item" %>
+    <%= link_to "リスナーを登録する", listeners_path, class: "header-item" %>
   </div>
 </div>
